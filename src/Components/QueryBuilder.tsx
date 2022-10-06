@@ -1,10 +1,10 @@
+import React from 'react'
 import { FormControl, FormLabel, VStack, Text, Center, RangeSliderTrack, RangeSliderThumb, RangeSliderFilledTrack, RangeSlider, RangeSliderMark } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
 import { getDistinctNames, getDistinctGenerations } from '../Utils/db_wrapper'
 import { SingleDatepicker } from 'chakra-dayzed-datepicker';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { RadioViewButton, RadioViewButtonProps } from './RadioCard';
-
 
 export interface QueryState  {
     selectedNames: string[],
@@ -100,7 +100,7 @@ export function Querier (props: QueryProps)  {
     </FormControl >
     <FormControl p={4}>
         <FormLabel>
-            Flight Duration (in Minutes)
+            Flight Duration (Min.)
         </FormLabel>
         <RangeSlider 
                 onChange={(e) => onChange({ duration: e })}
@@ -108,10 +108,14 @@ export function Querier (props: QueryProps)  {
             <RangeSliderTrack >
                 <RangeSliderFilledTrack  />
             </RangeSliderTrack>
-            <RangeSliderThumb boxSize={4} index={0} />
-            <RangeSliderThumb boxSize={4} index={1} />
+            <RangeSliderThumb boxSize={4} index={0} >
+                <Text fontSize={'xs'} color={'blackAlpha.700'} >{duration[0]}</Text>
+            </RangeSliderThumb>
+            <RangeSliderThumb boxSize={4} index={1} >
+                <Text fontSize={'xs'} color={'blackAlpha.700'} >{duration[1]}</Text>
+            </RangeSliderThumb>
             {Array.from(new Array(31), (_, i) => i).map((i) => 
-            <RangeSliderMark key={i} value={i} fontSize={ i % 10 === 0 ? '1xs' : '2xs'} >
+             <RangeSliderMark key={i} value={i} fontSize={ i % 10 === 0 ? '1xs' : '3xs'} >
                 {i % 10 === 0 ? i : '╵'}
             </RangeSliderMark>)}
  

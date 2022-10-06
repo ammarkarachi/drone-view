@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React,{ useCallback } from 'react';
 import { Center, useColorModeValue, Spinner } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
 /**

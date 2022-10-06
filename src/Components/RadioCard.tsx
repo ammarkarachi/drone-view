@@ -1,6 +1,6 @@
 import { Box, HStack, useRadio, useRadioGroup, Icon } from "@chakra-ui/react"
 import { BsList, BsMap } from 'react-icons/bs'
-
+import React from 'react'
 function RadioCard(props:any) {
     const { getInputProps, getCheckboxProps } = useRadio(props)
   

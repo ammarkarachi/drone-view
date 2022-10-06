@@ -8,7 +8,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { getFlightLogs } from '../Utils/db_wrapper';
 import { IFlightLogRecord } from '../Utils/db';
 import { useEffect, useState } from 'react';
-
+import React from 'react';
 const ChakraMapContainer = chakra(MapContainer, {
   baseStyle: {
     h: "full",
@@ -78,8 +78,8 @@ export function Map(props: MapProps) {
     <SetBounds flightLogs={flightLogs} />
     <SetSelected flightLog={selectedFlightLog} />
   </ChakraMapContainer>
-    <VStack zIndex={5} position='absolute' bottom={0} bg={'whiteAlpha.900'} width={'50'} align='stretch' padding={'1'}  >
-      {flightLogs.map((log: IFlightLogRecord, index: number) => <HStack
+    <VStack zIndex={5} position='sticky' bottom={'20'}  width={'50'} align='flex-start' padding={'1'}  >
+      {flightLogs.sort((a, b) => b.Timestamp - a.Timestamp).map((log: IFlightLogRecord, index: number) => <HStack
       backgroundColor={selectedFlightLog === log ? 'blue.500' : 'none'}
       padding='0.5'
         key={log.FlightIdentifier} cursor={'pointer'} onClick={e => {

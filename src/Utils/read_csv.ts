@@ -1,5 +1,4 @@
 
-import assert from 'assert';
 export interface IFlightLog {
     Name: string;
     Generation: string;
@@ -80,7 +79,6 @@ export function ReadCSV(data: string): {
                });
             } else {
                 flightLog = map.get(id);
-                assert(flightLog !== undefined);
             }
 
             flightLog?.FlightLog.push({

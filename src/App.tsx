@@ -1,10 +1,12 @@
 import './App.css';
-import { Divider, Grid, GridItem, Heading, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from '@chakra-ui/react';
+import { createIcon, Divider, Grid, GridItem, Heading, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from '@chakra-ui/react';
 import { Map } from './Components/Map'
 import { Querier, QueryState } from './Components/QueryBuilder';
 import { CreateLog } from './Components/Create';
 import React from 'react';
 import { TableView } from './Components/Graph';
+import { LogoIcon } from './IconSvg';
+
 
 function App() {
   const [selectedNames, setSelectedNames] = React.useState<string[]>([]);
@@ -29,10 +31,11 @@ function App() {
       templateRows='repeat(15, 1fr)'
       templateColumns='repeat(4, 1fr)'
       h='full'
+      height={'100vh'}
 
     >
-      <GridItem area={'nav'}  gridGap={'0'}  >
-        <Tabs variant={'enclosed'} isFitted >
+      <GridItem area={'nav'} rowSpan={16}  gridGap={'0'}  borderRight={'1px'} borderColor={'teal.400'} h='full'  >
+        <Tabs variant={'enclosed'} isFitted>
             <TabList>
               <Tab  >Query</Tab>
               <Tab>Create</Tab>
@@ -62,12 +65,15 @@ function App() {
       </GridItem>
       <GridItem area={'header'} colStart={1} colSpan={8} rowStart={1} rowSpan={1} >
         <VStack>
-          <Heading fontFamily={'mono'} fontWeight={'bold'} textColor={'gray.600'} >Drone Viewer - MX</Heading>
-          <Divider borderColor={'blue.600'} border={'3px'} size={'l'} />
+          <HStack>
+            <LogoIcon margin={'1'} />
+            <Heading fontFamily={'mono'} size='lg'>Drone Viewer - MX</Heading>
+          </HStack>
+          <Divider borderColor={'teal.400'} border={'3px'} size={'l'} />
         </VStack>
 
       </GridItem>
-      <GridItem area={'main'} colStart={2} rowStart={2} colSpan={6} rowSpan={17}>
+      <GridItem area={'main'} colStart={2} rowStart={2} colSpan={6} rowSpan={16}>
         {view === 'map' && 
         <Map queryState={{
           endDate,
