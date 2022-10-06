@@ -36,6 +36,6 @@ npm run serve
 Serves the app from the `/dist` folder
 
 ### Test Data
-You can generate your own test data in the form of csv files using the code in this (gist)[].
+You can generate your own test data in the form of csv files using the code in this [gist](https://gist.github.com/ammarkarachi/69c9c7759a855dbf4970e0b3c2cc61cb).
 
 
