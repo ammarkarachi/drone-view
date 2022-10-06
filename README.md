@@ -1,9 +1,16 @@
-# Getting Started Drone View
+# Getting Started Drone View - [Demo]()
 
-[Demo]()
-The drone view Web App uses [vite](https://vitejs.dev/) dev environment.
 
-Make sure you install all the dependency
+The drone view Web App uses the following frameworkds:
+
+- [vite](https://vitejs.dev/) dev environment. 
+- [React](https://reactjs.org/) for the UI.
+- [Chakra UI](https://chakra-ui.com/) for the UI components
+- [React Leaflet](https://react-leaflet.js.org/) for the maps.
+- [Dexie](https://dexie.org/) for the indexed DB wrapper
+
+
+Make sure you install all the dependencies before proceeding
 ```bash
 npm i
 ```
