@@ -3,7 +3,7 @@
 
 The drone view Web App uses the following frameworkds:
 
-- [vite](https://vitejs.dev/) dev environment. 
+- [Vite](https://vitejs.dev/) dev environment. 
 - [React](https://reactjs.org/) for the UI.
 - [Chakra UI](https://chakra-ui.com/) for the UI components
 - [React Leaflet](https://react-leaflet.js.org/) for the maps.
@@ -37,5 +37,22 @@ Serves the app from the `/dist` folder
 
 ### Test Data
 You can generate your own test data in the form of csv files using the code in this [gist](https://gist.github.com/ammarkarachi/69c9c7759a855dbf4970e0b3c2cc61cb).
+
+```python
+# bounding box
+p1 = [25.837377,-106.645646] # upper left corner
+p2 = [36.500704,-93.508292] # lower right corner
+
+# number of flights
+number_of_flights = 10
+
+# number of years
+end_year = 2021
+
+# file path to save the data to
+file_name = './test-data.csv'
+```
+
+The following fields can be edited and csv file will be generated at the path provided by running `python3 random_path_generator.py`
 
 
