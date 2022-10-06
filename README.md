@@ -46,13 +46,13 @@ p2 = [36.500704,-93.508292] # lower right corner
 # number of flights
 number_of_flights = 10
 
-# number of years
+# years
 end_year = 2021
 
 # file path to save the data to
 file_name = './test-data.csv'
 ```
 
-The following fields can be edited and csv file will be generated at the path provided by running `python3 random_path_generator.py`
+The following fields can be edited and csv file will be generated at the path provided by running `python3 random_path_generator.py`. The file randomly generates the following fields `Name`, `Generation`, `Date` and `Latitude`, `Longitude` 
 
 
