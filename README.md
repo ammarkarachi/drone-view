@@ -34,3 +34,8 @@ Builds the app and creates a distribution in the `/dist` folder under the root
 npm run serve
 ```
 Serves the app from the `/dist` folder
+
+### Test Data
+You can generate your own test data in the form of csv files using the code in this (gist)[].
+
+
