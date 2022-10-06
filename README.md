@@ -1,7 +1,7 @@
 # Getting Started Drone View
 
-#[Demo]()
-The drone view Web App uses [vite](https://vitejs.dev/) dev environment to serve and build the app
+[##Demo]()
+The drone view Web App uses [vite](https://vitejs.dev/) dev environment.
 
 Make sure you install all the dependency
 ```bash
