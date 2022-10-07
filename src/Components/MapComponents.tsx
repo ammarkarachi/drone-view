@@ -13,12 +13,12 @@ export function PolylineDecorator(props: PolylineProps) {
     const { opacity, weight, pathOptions, positions } = props;
     const arrow = [
         {
-          offset: "100%",
-          repeat: 1,
+          repeat: 70,
+          offset: 20,
           symbol: L.Symbol.arrowHead({
-            pixelSize: 15,
+            pixelSize: 16,
             polygon: false,
-            pathOptions: { stroke: true, color: pathOptions?.color, opacity, weight },
+            pathOptions: {  stroke: true, color: pathOptions?.color, opacity,  },
           }),
         },
     ];
