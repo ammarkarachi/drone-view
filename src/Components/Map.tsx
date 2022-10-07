@@ -1,3 +1,4 @@
+import React from "react";
 import { IFlightLog } from "../Utils/read_csv";
 import {
   chakra,
@@ -6,13 +7,13 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/react";
-import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Polyline, TileLayer, useMap,Polygon } from "react-leaflet";
 import { QueryState } from "./QueryBuilder";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getFlightLogs } from "../Utils/db_wrapper";
 import { IFlightLogRecord } from "../Utils/db";
 import { useEffect, useState } from "react";
-import React from "react";
+import { PolylineDecorator, SetBounds, SetSelected, } from "./MapComponents";
 const ChakraMapContainer = chakra(MapContainer, {
   baseStyle: {
     h: "full",
@@ -22,56 +23,7 @@ const ChakraMapContainer = chakra(MapContainer, {
 interface MapProps {
   queryState: QueryState;
 }
-function SetBounds(props: { flightLogs: IFlightLog[] }) {
-  const map = useMap();
-  const { flightLogs } = props;
 
-  const latitudes = flightLogs.reduce((array, flightLog) => {
-    const lats = flightLog.FlightLog.map((log) => log.Latitude);
-    return array.concat(lats);
-  }, new Array<number>());
-
-  const longitudes = flightLogs.reduce((array, flightLog) => {
-    const longs = flightLog.FlightLog.map((log) => log.Longitude);
-    return array.concat(longs);
-  }, new Array<number>());
-  if (latitudes.length === 0 || longitudes.length === 0) {
-    // just default to the center of the US
-    map.fitBounds([
-      [49.3457868, -124.784407],
-      [24.7433195, -66.9513812],
-    ]);
-    return <></>;
-  }
-  map.fitBounds([
-    [Math.min(...latitudes), Math.min(...longitudes)],
-    [Math.max(...latitudes), Math.max(...longitudes)],
-  ]);
-  return <></>;
-}
-
-function SetSelected(props: { flightLog?: IFlightLog }) {
-  const map = useMap();
-  const { flightLog } = props;
-  if (flightLog === undefined) {
-    return <></>;
-  }
-  const latitudes = flightLog.FlightLog.map((log) => log.Latitude);
-  const longitudes = flightLog.FlightLog.map((log) => log.Longitude);
-  if (latitudes.length === 0 || longitudes.length === 0) {
-    // just default to the center of the US
-    map.fitBounds([
-      [49.3457868, -124.784407],
-      [24.7433195, -66.9513812],
-    ]);
-    return <></>;
-  }
-  map.fitBounds([
-    [Math.min(...latitudes), Math.min(...longitudes)],
-    [Math.max(...latitudes), Math.max(...longitudes)],
-  ]);
-  return <></>;
-}
 
 export function Map(props: MapProps) {
   const { queryState } = props;
@@ -104,7 +56,7 @@ export function Map(props: MapProps) {
   }, [flightLogs]);
 
   return (
-    <>
+    <> 
       <ChakraMapContainer zIndex={1} key={"map"} maxZoom={20}>
         {isAnnotated ? (
           <TileLayer
@@ -127,14 +79,15 @@ export function Map(props: MapProps) {
             }
           />
         )}
-        {flightLogs.map((r: IFlightLogRecord) => (
-          <Polyline
+        {flightLogs.map((r: IFlightLogRecord) => ( <>
+          <PolylineDecorator
             opacity={0.65}
             weight={5}
             key={r.FlightIdentifier}
             pathOptions={{ color: r.Color }}
             positions={r.FlightLog.map((g) => [g.Latitude, g.Longitude])}
           />
+          </>
         ))}
         <SetBounds flightLogs={flightLogs} />
         <SetSelected flightLog={selectedFlightLog} />

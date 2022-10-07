@@ -92,7 +92,7 @@ function App() {
         </Tabs>
       </GridItem>
       <GridItem
-        area={"header"}
+        area={"header"} 
         colStart={1}
         colSpan={8}
         rowStart={1}
