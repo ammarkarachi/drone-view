@@ -14,6 +14,8 @@ import { getFlightLogs } from "../Utils/db_wrapper";
 import { IFlightLogRecord } from "../Utils/db";
 import { useEffect, useState } from "react";
 import { PolylineDecorator, SetBounds, SetSelected, } from "./MapComponents";
+import { getDateFromTimestamp, getDurationInMinutes } from "../Utils/date-helper";
+import { calculateDistance } from "../Utils/coordinate_helper";
 const ChakraMapContainer = chakra(MapContainer, {
   baseStyle: {
     h: "full",
@@ -79,15 +81,21 @@ export function Map(props: MapProps) {
             }
           />
         )}
-        {flightLogs.map((r: IFlightLogRecord) => ( <>
+   
+        {flightLogs.map((r: IFlightLogRecord) => (
           <PolylineDecorator
             opacity={0.65}
             weight={5}
+            tooltipContents={[
+              `Name: ${r.DroneIdentifier}`,
+              `Distance: ${Math.round(calculateDistance(r.FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude }))))} Mi.`,
+              `Duration: ${getDurationInMinutes(r.Duration)} Min.`,
+              `Date: ${getDateFromTimestamp(r.Timestamp).toLocaleDateString()}`
+            ]}
             key={r.FlightIdentifier}
             pathOptions={{ color: r.Color }}
             positions={r.FlightLog.map((g) => [g.Latitude, g.Longitude])}
           />
-          </>
         ))}
         <SetBounds flightLogs={flightLogs} />
         <SetSelected flightLog={selectedFlightLog} />
@@ -106,7 +114,7 @@ export function Map(props: MapProps) {
             <HStack
               backgroundColor={selectedFlightLog === log ? "blue.500" : "none"}
               padding="0.5"
-              key={log.FlightIdentifier}
+              key={log.FlightIdentifier + log.FlightIdentifier}
               cursor={"pointer"}
               onClick={(e) => {
                 changeSelectedFlighLog(log);

@@ -4,12 +4,16 @@ import L from "leaflet";
 import "leaflet-polylinedecorator";
 import { IFlightLog } from "../Utils/read_csv";
 
+interface DecoratePolyLineProps extends PolylineProps {
+  tooltipContents?: string[];
+}
 // Creates a Lines with Arrows
-export function PolylineDecorator(props: PolylineProps) {
+export function PolylineDecorator(props: DecoratePolyLineProps) {
   const map = useMap();
 
   useEffect(() => {
     if (!map) return;
+
     const { opacity, weight, pathOptions, positions } = props;
     const arrow = [
         {
@@ -22,15 +26,24 @@ export function PolylineDecorator(props: PolylineProps) {
           }),
         },
     ];
-    L.polyline(positions, {
+    const p = L.polyline(positions, {
         color: pathOptions?.color,
         opacity: opacity,
         weight
-    }).addTo(map);
-    L.polylineDecorator(positions as any, {
+    }).addTo(map)
+    
+    .bindPopup(`<div class="chakra-ui-dark">${props.tooltipContents?.join('<br/>')}</div>`)
+    console.log(props.tooltipContents)
+    const a = L.polylineDecorator(positions as any, {
       patterns: arrow,
     }).addTo(map);
-  }, [map]);
+    return () => {
+      a.remove();
+      p.remove();
+    }
+
+  }, [props]);
+
 
   return null;
 }
