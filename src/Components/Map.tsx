@@ -1,5 +1,5 @@
 import React from "react";
-import { IFlightLog } from "../Utils/read_csv";
+import { IFlightLog } from "../Utils/data/read-csv";
 import {
   chakra,
   Checkbox,
@@ -8,14 +8,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MapContainer, Polyline, TileLayer, useMap,Polygon } from "react-leaflet";
-import { QueryState } from "./QueryBuilder";
-import { useLiveQuery } from "dexie-react-hooks";
-import { getFlightLogs } from "../Utils/db_wrapper";
-import { IFlightLogRecord } from "../Utils/db";
+import { IFlightLogRecord } from "../Utils/data/db";
 import { useEffect, useState } from "react";
 import { PolylineDecorator, SetBounds, SetSelected, } from "./MapComponents";
 import { getDateFromTimestamp, getDurationInMinutes } from "../Utils/date-helper";
-import { calculateDistance } from "../Utils/coordinate_helper";
 const ChakraMapContainer = chakra(MapContainer, {
   baseStyle: {
     h: "full",
@@ -23,36 +19,39 @@ const ChakraMapContainer = chakra(MapContainer, {
   },
 });
 interface MapProps {
-  queryState: QueryState;
+  flightLogs: IFlightLogRecord[];
 }
 
 
 export function Map(props: MapProps) {
-  const { queryState } = props;
+  const { flightLogs } = props;
 
-  const {
-    selectedNames,
-    selectedGenerations,
-    startDate,
-    endDate,
-    duration,
-  } = queryState;
+  // const {
+  //   selectedNames,
+  //   selectedGenerations,
+  //   startDate,
+  //   endDate,
+  //   duration,
+  // } = queryState;
+  // const flightLogs =
+  //   useLiveQuery(
+  //     () =>
+  //       getFlightLogs(
+  //         selectedNames,
+  //         selectedGenerations,
+  //         startDate,
+  //         endDate,
+  //         duration
+  //       ),
+  //     [props.queryState]
+  //   ) || [];
+
   const [isAnnotated, setAnnotation] = useState(false);
-  const flightLogs =
-    useLiveQuery(
-      () =>
-        getFlightLogs(
-          selectedNames,
-          selectedGenerations,
-          startDate,
-          endDate,
-          duration
-        ),
-      [props.queryState]
-    ) || [];
   const [selectedFlightLog, changeSelectedFlighLog] = useState<
     IFlightLog | undefined
   >(undefined);
+
+
   useEffect(() => {
     changeSelectedFlighLog(undefined);
   }, [flightLogs]);
@@ -88,7 +87,7 @@ export function Map(props: MapProps) {
             weight={5}
             tooltipContents={[
               `Name: ${r.DroneIdentifier}`,
-              `Distance: ${Math.round(calculateDistance(r.FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude }))))} Mi.`,
+              `Distance: ${Math.round(r.Distance)} Mi.`,
               `Duration: ${getDurationInMinutes(r.Duration)} Min.`,
               `Date: ${getDateFromTimestamp(r.Timestamp).toLocaleDateString()}`
             ]}
@@ -110,11 +109,11 @@ export function Map(props: MapProps) {
       >
         {flightLogs
           .sort((a, b) => b.Timestamp - a.Timestamp)
-          .map((log: IFlightLogRecord, index: number) => (
+          .map((log: IFlightLogRecord, _: number) => (
             <HStack
               backgroundColor={selectedFlightLog === log ? "blue.500" : "none"}
               padding="0.5"
-              key={log.FlightIdentifier + log.FlightIdentifier}
+              key={log.FlightIdentifier + log.DroneIdentifier}
               cursor={"pointer"}
               onClick={(e) => {
                 changeSelectedFlighLog(log);

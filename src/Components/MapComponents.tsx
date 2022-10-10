@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { PolylineProps, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-polylinedecorator";
-import { IFlightLog } from "../Utils/read_csv";
+import { IFlightLog } from "../Utils/data/read-csv";
 
 interface DecoratePolyLineProps extends PolylineProps {
   tooltipContents?: string[];
@@ -31,9 +31,7 @@ export function PolylineDecorator(props: DecoratePolyLineProps) {
         opacity: opacity,
         weight
     }).addTo(map)
-    
     .bindPopup(`<div class="chakra-ui-dark">${props.tooltipContents?.join('<br/>')}</div>`)
-    console.log(props.tooltipContents)
     const a = L.polylineDecorator(positions as any, {
       patterns: arrow,
     }).addTo(map);

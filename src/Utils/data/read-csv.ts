@@ -11,6 +11,11 @@ export interface IFlightLog {
 
 const headers = ['Name','Generation','FlightIdenitifier','DroneIdentifier','Latitude','Longitude','Timestamp'];
 
+/**
+ * Return denormalized data by parsing a string of contents
+ * @param data string contents of data
+ * @returns {IFlightLog[]}
+ */
 export function ReadCSV(data: string): {
     flightLogs: Array<IFlightLog>
     errors: Array<string>,

@@ -1,3 +1,9 @@
+
+/**
+ * generates a color using a number as a hex value
+ * @param n number
+ * @returns string hex value of color
+ */
 export function generateUniqueColor(n: number) {
     const rgb = [0, 0, 0];
   

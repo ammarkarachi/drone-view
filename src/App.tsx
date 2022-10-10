@@ -1,7 +1,5 @@
 import "./App.css";
 import {
-  createIcon,
-  Divider,
   Grid,
   GridItem,
   Heading,
@@ -11,16 +9,20 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { Map } from "./Components/Map";
 import { Querier, QueryState } from "./Components/QueryBuilder";
 import { CreateLog } from "./Components/Create";
-import React from "react";
+import React, { useEffect } from "react";
 import { TableView } from "./Components/Graph";
 import { LogoIcon } from "./IconSvg";
+import { getFirstTimeInApp } from "./Utils/data/local-storage";
+import { useLiveQuery } from "dexie-react-hooks";
+import { getFlightLogs, getTotalCount } from "./Utils/data/db-wrapper";
 
 function App() {
+  const toast = useToast();
   const [selectedNames, setSelectedNames] = React.useState<string[]>([]);
   const [selectedGenerations, setSelectedGenerations] = React.useState<
     string[]
@@ -34,7 +36,9 @@ function App() {
   );
   const [endDate, setEndDate] = React.useState<Date>(new Date());
   const [duration, setDuration] = React.useState<number[]>([5, 30]);
+  const [distance, setDistance] = React.useState<number[]>([0, 100]);
   const [view, setView] = React.useState<string>("map");
+
   const queryChanged = (partialState: Partial<QueryState>) => {
     setSelectedNames(partialState.selectedNames || selectedNames);
     setSelectedGenerations(
@@ -43,7 +47,49 @@ function App() {
     setStartDate(partialState.startDate || startDate);
     setEndDate(partialState.endDate || endDate);
     setDuration(partialState.duration || duration);
+    setDistance(partialState.distance || distance);
   };
+  
+  const flightLogs =
+    useLiveQuery(
+      () =>
+        getFlightLogs(
+          selectedNames,
+          selectedGenerations,
+          startDate,
+          endDate,
+          duration,
+          distance
+        ),
+      [selectedNames, selectedGenerations, startDate, endDate, duration, distance]
+    ) ;
+
+  const totalCount = useLiveQuery(() => getTotalCount());
+  console.log(distance);
+  useEffect(() => {
+    if (getFirstTimeInApp()) return;
+    toast({
+      title: "Welcome to the Drone View-MX",
+      description: "Select Create to get started",
+      status: "info",
+      duration: 9000,
+      isClosable: true,
+    });
+  }, [toast]);
+
+  useEffect(() => {
+    if (!totalCount || !flightLogs) return;
+    
+    if (totalCount > 0 && flightLogs.length === 0) {
+      toast({
+        title: "0 rows returned",
+        description: "Modify your query to get results",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [flightLogs]);
 
   return (
     <Grid
@@ -77,6 +123,7 @@ function App() {
                   duration,
                   selectedNames,
                   selectedGenerations,
+                  distance,
                 }}
                 onChange={queryChanged}
                 radioViewProps={{
@@ -92,7 +139,7 @@ function App() {
         </Tabs>
       </GridItem>
       <GridItem
-        area={"header"} 
+        area={"header"}
         colStart={1}
         colSpan={8}
         rowStart={1}
@@ -116,24 +163,12 @@ function App() {
       >
         {view === "map" && (
           <Map
-            queryState={{
-              endDate,
-              startDate,
-              duration,
-              selectedNames,
-              selectedGenerations,
-            }}
+            flightLogs={flightLogs || []}
           />
         )}
         {view === "list" && (
           <TableView
-            queryState={{
-              endDate,
-              startDate,
-              duration,
-              selectedNames,
-              selectedGenerations,
-            }}
+            flightLogs={flightLogs || []}
           />
         )}
       </GridItem>

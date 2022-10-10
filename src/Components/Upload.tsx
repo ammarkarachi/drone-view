@@ -1,11 +1,7 @@
 import React,{ useCallback } from 'react';
 import { Center, useColorModeValue, Spinner } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
-/**
- * 
- * @param props 
- * @returns 
- */
+
 export default function UploadFile(props: { onFileAccepted: (file: File) => void, busy: boolean }) {
   const onDrop = useCallback((acceptedFiles: File[] ) => {
     props.onFileAccepted(acceptedFiles[0]);

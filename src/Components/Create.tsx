@@ -2,12 +2,13 @@ import { Button, Divider, FormControl, Text, HStack, VStack, Grid, Center, Icon,
 import { SingleDatepicker } from 'chakra-dayzed-datepicker';
 import React from 'react';
 import { BsSave } from 'react-icons/bs'
-import { putFlightLogs } from '../Utils/db_wrapper';
+import { putFlightLogs } from '../Utils/data/db-wrapper';
 import { v4 } from 'uuid';
 import { getTimestamp, getTimeStampFromTime } from '../Utils/date-helper';
-import { IFlightLog, ReadCSV } from '../Utils/read_csv';
+import { IFlightLog, ReadCSV } from '../Utils/data/read-csv';
 import UploadFile from './Upload';
-import { readFile } from '../Utils/file_helper';
+import { readFile } from '../Utils/file-helper';
+import { calculateDistance } from '../Utils/coordinate-helper';
 
 interface LocationProps {
     Location: LocationEntryType;
@@ -36,7 +37,7 @@ const Location: React.FC<LocationProps> = (props) => {
     </GridItem>
         <GridItem colStart={2} >
             <FormControl>
-                <NumberInput size={'xs'} >
+                <NumberInput size={'xs'} keepWithinRange clampValueOnBlur >
                     <NumberInputField  value={props.Location.Latitude} min={-90} max={90} onChange={e => updateLocation({
                         Latitude: e.target.value,
                     }, index)} />
@@ -45,10 +46,11 @@ const Location: React.FC<LocationProps> = (props) => {
         </GridItem>
         <GridItem>
             <FormControl>
-                <NumberInput size={'xs'} >
+                <NumberInput size={'xs'} keepWithinRange clampValueOnBlur >
                     <NumberInputField value={props.Location.Longitude} min={-180} max={180} onChange={e => updateLocation({
                         Longitude: e.target.value,
-                    }, index)} />
+                    }, index)}
+                      />
                 </NumberInput>
             </FormControl>
 
@@ -66,7 +68,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
     const [name, nameChanged] = React.useState('');
     const [generation, generationChanged] = React.useState(1);
     const [date, onDateChange] = React.useState<Date>(new Date());
-    const [location, locationChanged] = React.useState<LocationEntryType[]>([{ Latitude: '32', Longitude: '117', Time: '12:00' }]);
+    const [location, locationChanged] = React.useState<LocationEntryType[]>([{ Latitude: '32', Longitude: '-117', Time: '12:00' }]);
     const [isNameValid, setNameValid] = React.useState(false);
     const [isLoading, setLoading] = React.useState(false);
     const [isBusy, setBusy] = React.useState(false);
@@ -88,7 +90,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
         locationChanged(newLocations);
     }
 
-    const save = async () => {
+    const save = async() => {
         const baseTs = getTimestamp(date);
         const log: IFlightLog[] = [{
             Name: name,
@@ -98,10 +100,23 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
             FlightLog: location.map(l => ({ Latitude: parseFloat(l.Latitude), Longitude: parseFloat(l.Longitude), DateTime: baseTs + getTimeStampFromTime(l.Time) }))
         }]
         setLoading(true);
+        const distance = calculateDistance(log[0].FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude })));
+        console.log(log);
+        if(distance > 100){
+            toast({
+                title: 'Distance too large',
+                description: 'The distance is too large. Please check your data.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            setLoading(false);
+            return;
+        }
         await putFlightLogs(log);
         nameChanged('');
         generationChanged(1);
-        locationChanged([{ Latitude: '32', Longitude: '117', Time: '12:00' }]);
+        locationChanged([{ ...location[0] }]);
         onDateChange(new Date());
         toast({
             title: "Flight log saved",
@@ -152,8 +167,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
         }
 
         setBusy(false);
-    }
-
+    };
     return <VStack>
         <UploadFile onFileAccepted={uploadFile} busy={isBusy} />
         <Grid templateColumns='repeat(3, 1fr)' gap={5}>
@@ -173,6 +187,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
                     <FormControl isRequired  >
                         <FormLabel>Name</FormLabel>
                         <Input type={'text'}
+                        focusBorderColor={'teal.400'}
                          borderRightRadius={'none'} 
                          size='sm' 
                          value={name} 
@@ -188,6 +203,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
                         <FormLabel>Gen</FormLabel>
                         <NumberInput borderLeftRadius={'none'} size='sm'
                             keepWithinRange
+                            focusBorderColor='teal.400'
                             value={generation}
                             onChange={(value) => generationChanged(Number(value))}
                             min={1} max={26}>
@@ -210,7 +226,8 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
                             size: 'sm'
                         },
                         inputProps: {
-                            size: 'sm'
+                            size: 'sm',
+                            focusBorderColor: 'teal.400'
                         },
                     }}
                     date={date} onDateChange={(e) => onDateChange(e)} />
@@ -245,7 +262,6 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
                 />)}
 
             </Grid>
-
         </VStack>
         <Divider w={'full'} borderColor={'green.800'} shadow={'dark-lg'} />
         <HStack>
@@ -254,7 +270,7 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
                 leftIcon={<Icon as={BsSave} />} 
                 variant={'outline'} 
                 onClick={save}
-                isDisabled={!isNameValid || location.length === 0}
+                isDisabled={!isNameValid || location.length < 2}
                 >
                     Save
             </Button>

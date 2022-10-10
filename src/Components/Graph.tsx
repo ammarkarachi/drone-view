@@ -1,21 +1,15 @@
 import { Container, Fade, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
-import { useLiveQuery } from "dexie-react-hooks";
-import { getFlightLogs } from "../Utils/db_wrapper";
-import { QueryState } from "./QueryBuilder"
 import { getDateFromTimestamp, getDurationInMinutes } from '../Utils/date-helper'
-import { calculateDistance } from '../Utils/coordinate_helper'
 import React, { useRef } from 'react';
+import { IFlightLogRecord } from "../Utils/data/db";
 
 interface TableViewProps {
-    queryState: QueryState
+    flightLogs: IFlightLogRecord[]
 }
 const ColorComponent =({color}:{color:string})=>{
     return <div style={{width:'10px',height:'10px',backgroundColor:color}}></div>
 }
-export const TableView = (props: TableViewProps) => {
-    const { queryState } = props;
-    const { selectedNames, selectedGenerations, startDate, endDate, duration } = queryState;
-    const flightLogs = useLiveQuery(() => getFlightLogs(selectedNames, selectedGenerations, startDate, endDate, duration), [props.queryState]) || [];
+export const TableView = ({ flightLogs }: TableViewProps) => {
     return <Table  borderLeftColor={'gray.300'} >
         <Thead >
             <Tr>
@@ -35,7 +29,7 @@ export const TableView = (props: TableViewProps) => {
                     <Td>{flightLog.Generation}</Td>
                     <Td>{getDateFromTimestamp(flightLog.Timestamp).toLocaleDateString()}</Td>
                     <Td>{getDurationInMinutes(flightLog.Duration)}</Td>
-                    <Td>{Math.round(calculateDistance(flightLog.FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude }))))}</Td>
+                    <Td>{Math.round(flightLog.Distance)}</Td>
                 </Tr>}
             )}
         </Tbody>

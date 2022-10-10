@@ -19,7 +19,11 @@ export const getTimestamp = (datetime: Date) : number => {
     date.setHours(0, 0, 0, 0);
     return toTimestamp(date);
 }
-
+/**
+ * gets the number of seconds in the day by accepting time of the day
+ * @param time 
+ * @returns {number} second
+ */
 export const getTimeStampFromTime = (time: string) : number => {
     const splitTime = time.split(":");
     const offset = getTimezoneOffset(Intl.DateTimeFormat().resolvedOptions().timeZone);
