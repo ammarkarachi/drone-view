@@ -65,7 +65,6 @@ function App() {
     ) ;
 
   const totalCount = useLiveQuery(() => getTotalCount());
-  console.log(distance);
   useEffect(() => {
     if (getFirstTimeInApp()) return;
     toast({

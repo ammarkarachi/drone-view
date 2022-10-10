@@ -101,7 +101,6 @@ export const CreateLog: React.FC<{}> = (props: {}) => {
         }]
         setLoading(true);
         const distance = calculateDistance(log[0].FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude })));
-        console.log(log);
         if(distance > 100){
             toast({
                 title: 'Distance too large',

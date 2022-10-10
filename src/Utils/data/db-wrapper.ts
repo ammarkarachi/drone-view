@@ -97,7 +97,6 @@ async function transformFlightLogToRecord(flightLogs: IFlightLog[]) {
         const min = Math.min(...times);
         const max = Math.max(...times);
         const coordinates = r.FlightLog.map(log => ({ Latitude: log.Latitude, Longitude: log.Longitude }));
-        console.log(calculateDistance(coordinates));
         return {
             ...r,
             Duration: max - min,
