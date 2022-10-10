@@ -101,7 +101,7 @@ export function Map(props: MapProps) {
       </ChakraMapContainer>
       <VStack
         zIndex={5}
-        position="sticky"
+        position="fixed"
         bottom={"20"}
         width={"50"}
         align="flex-start"
